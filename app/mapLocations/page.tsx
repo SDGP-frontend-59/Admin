@@ -9,19 +9,19 @@ interface MapLocation {
   name: string;
   latitude: number;
   longitude: number;
-  short_description: string;
-  image: File | null;
-  long_description: string;
+  description: string;
+  image_name: File | null;
+  longDes: string;
 }
 
 export default function MapLocationsPage() {
   const [name, setName] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
-  const [shortDescription, setShortDescription] = useState('');
-  const [image, setImage] = useState<File | null>(null);
+  const [description, setShortDescription] = useState('');
+  const [image_name, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
-  const [longDescription, setLongDescription] = useState('');
+  const [longDes, setLongDescription] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,10 +44,10 @@ export default function MapLocationsPage() {
       formData.append('name', name);
       formData.append('latitude', latitude);
       formData.append('longitude', longitude);
-      formData.append('short_description', shortDescription);
-      formData.append('long_description', longDescription);
-      if (image) {
-        formData.append('image', image);
+      formData.append('description', description);
+      formData.append('longDes', longDes);
+      if (image_name) {
+        formData.append('image', image_name);
       }
 
       const response = await fetch('/api/mapLocations', {
@@ -142,7 +142,7 @@ export default function MapLocationsPage() {
               <label className="block text-sm font-medium mb-1">Short Description</label>
               <input
                 type="text"
-                value={shortDescription}
+                value={description}
                 onChange={(e) => setShortDescription(e.target.value)}
                 required
                 className="w-full p-2 rounded-md border border-[var(--border)] bg-[var(--input-background)]"
@@ -171,7 +171,7 @@ export default function MapLocationsPage() {
             <div>
               <label className="block text-sm font-medium mb-1">Long Description</label>
               <textarea
-                value={longDescription}
+                value={longDes}
                 onChange={(e) => setLongDescription(e.target.value)}
                 rows={4}
                 className="w-full p-2 rounded-md border border-[var(--border)] bg-[var(--input-background)]"

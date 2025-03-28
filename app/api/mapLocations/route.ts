@@ -7,25 +7,25 @@ export async function POST(request: Request) {
     const name = formData.get('name') as string;
     const latitude = parseFloat(formData.get('latitude') as string);
     const longitude = parseFloat(formData.get('longitude') as string);
-    const short_description = formData.get('short_description') as string;
-    const long_description = formData.get('long_description') as string;
-    const image = formData.get('image') as File;
+    const description = formData.get('description') as string;
+    const longDes = formData.get('longDes') as string;
+    const image_name = formData.get('image') as File;
 
-    let image_url = '';
+    let image = '';
 
     if (image) {
       try {
         // Convert File to ArrayBuffer
-        const arrayBuffer = await image.arrayBuffer();
+        const arrayBuffer = await image_name.arrayBuffer();
         const buffer = new Uint8Array(arrayBuffer);
 
-        const fileExt = image.name.split('.').pop();
+        const fileExt = image_name.name.split('.').pop();
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
 
         console.log('Attempting to upload file:', {
           fileName,
-          fileSize: image.size,
-          fileType: image.type
+          fileSize: image_name.size,
+          fileType: image_name.type
         });
 
         // First check if the bucket exists
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('map-locations')
           .upload(fileName, buffer, {
-            contentType: image.type,
+            contentType: image_name.type,
             cacheControl: '3600',
             upsert: false
           });
@@ -58,8 +58,8 @@ export async function POST(request: Request) {
           .from('map-locations')
           .getPublicUrl(fileName);
 
-        image_url = publicUrl;
-        console.log('Generated public URL:', image_url);
+        image = publicUrl;
+        console.log('Generated public URL:', image);
       } catch (uploadError) {
         console.error('Image upload failed:', uploadError);
         // Continue with location creation even if image upload fails
@@ -71,9 +71,9 @@ export async function POST(request: Request) {
       name,
       latitude,
       longitude,
-      short_description,
-      image_url,
-      long_description
+      description,
+      image,
+      longDes
     });
 
     const { data, error } = await supabase
@@ -83,9 +83,9 @@ export async function POST(request: Request) {
           name,
           latitude,
           longitude,
-          short_description,
-          image_url,
-          long_description,
+          description,
+          image,
+          longDes,
         },
       ])
       .select()
