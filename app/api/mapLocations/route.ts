@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
     let image = '';
 
-    if (image) {
+    if (image_name) {
       try {
         // Convert File to ArrayBuffer
         const arrayBuffer = await image_name.arrayBuffer();
