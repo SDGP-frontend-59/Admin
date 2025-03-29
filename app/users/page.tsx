@@ -93,7 +93,6 @@ export default function UsersPage() {
         timer: 2000,
         showConfirmButton: false
       });
-      setLoading(true);
     } catch (error) {
       console.error('Error updating role:', error);
       Swal.fire({
