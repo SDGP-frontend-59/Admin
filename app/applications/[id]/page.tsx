@@ -53,10 +53,7 @@ interface Application {
   nature_of_bound: string;
   minerals_to_be_mined: string;
   license_fee_receipt: string;
-  applicant_signature: string;
-  mine_manager_signature: string;
   industrial_mining_license_no: string;
-  director_general_signature: string;
   royalty_payable: number;
   status: string;
   category: string;
@@ -292,14 +289,6 @@ export default function ApplicationDetails() {
               <div>
                 <span className="text-sm opacity-70">License Fee Receipt</span>
                 <p className="font-medium hover:text-blue-500"><a href={application.license_fee_receipt} target="_blank" rel="noopener noreferrer">View</a></p>
-              </div>
-              <div>
-                <span className="text-sm opacity-70">Applicant Signature</span>
-                <p className="font-medium hover:text-blue-500"><a href={application.applicant_signature} target="_blank" rel="noopener noreferrer">View</a></p>
-              </div>
-              <div>
-                <span className="text-sm opacity-70">Mine Manager Signature</span>
-                <p className="font-medium hover:text-blue-500"><a href={application.mine_manager_signature} target="_blank" rel="noopener noreferrer">View</a></p>
               </div>
             </div>
           </div>
