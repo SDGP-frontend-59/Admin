@@ -7,8 +7,6 @@ interface Contact {
     id: string;
     name: string;
     email: string;
-    phone: string;
-    subject: string;
     message: string;
 }
 
@@ -60,8 +58,6 @@ export default function ContactPage() {
                                 <tr className="border-b border-[var(--foreground)]">
                                     <th className="text-left py-4 px-6">Name</th>
                                     <th className="text-left py-4 px-6">Email</th>
-                                    <th className="text-left py-4 px-6">Phone</th>
-                                    <th className="text-left py-4 px-6">Subject</th>
                                     <th className="text-left py-4 px-6">Message</th>
                                 </tr>
                             </thead>
@@ -70,8 +66,6 @@ export default function ContactPage() {
                                     <tr key={contact.id} className="border-b border-[var(--foreground)] opacity-70">
                                         <td className="py-4 px-6">{contact.name}</td>
                                         <td className="py-4 px-6">{contact.email}</td>
-                                        <td className="py-4 px-6">{contact.phone}</td>
-                                        <td className="py-4 px-6">{contact.subject}</td>
                                         <td className="py-4 px-6">{contact.message}</td>
                                     </tr>
                                 ))}
