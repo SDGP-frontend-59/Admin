@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     // First verify the application exists
     const { data: exists, error: checkError } = await supabase
       .from('application')
-      .select('*')
+      .select('*, miner_id')
       .eq('id', applicationId)
       .single();
 
@@ -52,6 +52,7 @@ export async function POST(request: Request) {
     }
 
     console.log('Application found:', exists);
+    const minerId = exists.miner_id;
 
     // Update the application status
     const { data: updateData, error: updateError } = await supabase
@@ -82,6 +83,7 @@ export async function POST(request: Request) {
         .from('comments')
         .insert([{ 
           application_id: applicationId, 
+          miner_id: minerId,
           text: comments, 
           author: 'Admin',
           created_at: new Date().toISOString()

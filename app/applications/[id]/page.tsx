@@ -61,8 +61,7 @@ interface Application {
   status: string;
   category: string;
   period_of_validity: string;
-  description: string;
-  submission_date: string;
+  created_at: string;
   documents: Document[];
   comments: Comment[];
 }
@@ -328,7 +327,7 @@ export default function ApplicationDetails() {
               </div>
               <div>
                 <span className="text-sm opacity-70">Submission Date</span>
-                <p className="font-medium">{new Date(application.submission_date).toLocaleDateString()}</p>
+                <p className="font-medium">{new Date(application.created_at).toLocaleDateString()}</p>
               </div>
               <div className="flex justify-center">
                 <Link href={`/status/${application.id}`}
@@ -339,11 +338,6 @@ export default function ApplicationDetails() {
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="bg-[var(--card-background)] p-6 rounded-xl shadow-lg mb-8">
-          <h2 className="text-xl font-semibold mb-4">Description</h2>
-          <p className="text-[var(--foreground)] opacity-80">{application.description}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
