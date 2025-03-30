@@ -24,11 +24,20 @@ export default function ApplicationsPage() {
     try {
       setLoading(true);
       const response = await fetch('/api/applications');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
-      setApplications(data);
+      if (Array.isArray(data)) {
+        setApplications(data);
+      } else {
+        console.error('Received non-array data:', data);
+        setApplications([]);
+      }
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching applications:', error);
-    } finally {
+      setApplications([]);
       setLoading(false);
     }
   };
