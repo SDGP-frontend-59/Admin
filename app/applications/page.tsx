@@ -39,6 +39,8 @@ export default function ApplicationsPage() {
       console.error('Error fetching applications:', error);
       setApplications([]);
       setLoading(false);
+    }finally {
+      setLoading(false);
     }
   };
 
