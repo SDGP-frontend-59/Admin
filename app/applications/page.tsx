@@ -24,21 +24,11 @@ export default function ApplicationsPage() {
     try {
       setLoading(true);
       const response = await fetch('/api/applications');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
       const data = await response.json();
-      if (Array.isArray(data)) {
-        setApplications(data);
-      } else {
-        console.error('Received non-array data:', data);
-        setApplications([]);
-      }
+      setApplications(data);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching applications:', error);
-      setApplications([]);
-      setLoading(false);
     }finally {
       setLoading(false);
     }
@@ -47,6 +37,28 @@ export default function ApplicationsPage() {
   useEffect(() => {
     fetchApplications();
   }, []);
+
+  // const fetchApplications = async () => {
+  //   try {
+  //     const response = await fetch('/api/applications');
+  //     const data = await response.json();
+  //     setApplications(data);
+  //   } catch (error) {
+  //     console.error('Error fetching applications:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchApplications();
+
+  //   // Set up polling to refresh data every 3 seconds
+  //   const interval = setInterval(fetchApplications, 3000);
+    
+  //   // Cleanup interval on component unmount
+  //   return () => clearInterval(interval);
+  // }, []);
 
   if (loading) {
     return (
