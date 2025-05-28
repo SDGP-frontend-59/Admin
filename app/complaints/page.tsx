@@ -18,6 +18,10 @@ export default function ComplaintsPage() {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [showResolved, setShowResolved] = useState(false);
+  const [showRejected, setShowRejected] = useState(false);
 
   const fetchComplaints = async () => {
     try {
@@ -74,43 +78,20 @@ export default function ComplaintsPage() {
     }
   };
 
-  const handleDeleteComplaint = async (id: string, status: string) => {
-    if (status !== 'Resolved') {
-      await Swal.fire('Error', 'Only resolved complaints can be deleted.', 'error');
-      return;
-    }
+  const filteredComplaints = complaints.filter(complaint => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      complaint.email.toLowerCase().includes(searchLower) ||
+      complaint.project.toLowerCase().includes(searchLower) ||
+      complaint.complaint_text.toLowerCase().includes(searchLower)
+    );
+  }).sort((a, b) => {
+    const dateA = new Date(a.created_at).getTime();
+    const dateB = new Date(b.created_at).getTime();
+    return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+  });
 
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'This complaint will be permanently deleted!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!',
-    });
-
-    if (result.isConfirmed) {
-      try {
-        const response = await fetch('/api/complaints', {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id }),
-        });
-
-        if (response.ok) {
-          await Swal.fire('Deleted!', 'Complaint has been deleted.', 'success');
-          fetchComplaints();
-        } else {
-          const data = await response.json();
-          await Swal.fire('Error', data.error || 'Failed to delete complaint.', 'error');
-        }
-      } catch (error) {
-        console.error('Error deleting complaint:', error);
-        await Swal.fire('Error', 'Failed to delete complaint.', 'error');
-      }
-    }
-  };
+  const statusColumns = ['Pending', 'Resolved', 'Rejected'];
 
   if (loading) {
     return (
@@ -124,8 +105,8 @@ export default function ComplaintsPage() {
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-[var(--foreground)] mb-4">Complaint Management</h1>
           <p className="text-lg text-[var(--foreground)] opacity-80 max-w-2xl mx-auto">
             Review and manage user complaints efficiently.
@@ -138,70 +119,178 @@ export default function ComplaintsPage() {
           </div>
         )}
 
-        <div className="bg-[var(--background)] rounded-xl shadow-lg p-6">
-          <div className="overflow-x-auto">
-            {complaints.length === 0 && !loading ? (
-              <p className="text-center py-4">No complaints found.</p>
-            ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[var(--foreground)]">
-                  <th className="text-left py-4 px-6">Date</th>
-                  <th className="text-left py-4 px-6">Email</th>
-                  <th className="text-left py-4 px-6">Project</th>
-                  <th className="text-left py-4 px-6">Complaint</th>
-                  <th className="text-left py-4 px-6">Status</th>
-                  <th className="text-left py-4 px-6">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {complaints.map((complaint) => (
-                  <tr key={complaint.id} className="border-b border-[var(--foreground)] opacity-70">
-                    <td className="py-4 px-6">
-                      {new Date(complaint.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="py-4 px-6">
-                      {complaint.anonymous ? 'Anonymous' : complaint.email}
-                    </td>
-                    <td className="py-4 px-6">{complaint.project}</td>
-                    <td className="py-4 px-6">{complaint.complaint_text}</td>
-                    <td className="py-4 px-6">
-                      <span
-                        className={`px-3 py-1 rounded-full ${
-                          complaint.status === 'Pending'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : complaint.status === 'Resolved'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}
+        <div className="mb-6 flex flex-col gap-4">
+          <div className="flex gap-4 items-center">
+            <input
+              type="text"
+              placeholder="Search complaints..."
+              className="px-4 py-2 rounded-lg border border-[var(--foreground)] bg-transparent flex-grow"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              className="px-4 py-2 rounded-lg border border-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-colors"
+            >
+              Sort by Date {sortOrder === 'asc' ? '↑' : '↓'}
+            </button>
+          </div>
+          <div className="flex gap-4">
+            <button
+              onClick={() => setShowResolved(!showResolved)}
+              className={`px-4 py-2 rounded-lg border transition-colors ${
+                showResolved 
+                  ? 'bg-green-500 text-white border-green-500' 
+                  : 'border-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)]'
+              }`}
+            >
+              {showResolved ? 'Hide Resolved' : 'Show Resolved'}
+            </button>
+            <button
+              onClick={() => setShowRejected(!showRejected)}
+              className={`px-4 py-2 rounded-lg border transition-colors ${
+                showRejected 
+                  ? 'bg-red-500 text-white border-red-500' 
+                  : 'border-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)]'
+              }`}
+            >
+              {showRejected ? 'Hide Rejected' : 'Show Rejected'}
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-6">
+          {/* Resolved and Rejected Columns - Side by side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Resolved Column */}
+            {showResolved && (
+              <div className="bg-[var(--background)] rounded-xl shadow-lg p-4">
+                <h2 className="text-xl font-semibold mb-4 text-[var(--foreground)]">
+                  Resolved
+                  <span className="ml-2 text-sm opacity-70">
+                    ({filteredComplaints.filter(c => c.status === 'Resolved').length})
+                  </span>
+                </h2>
+                <div className="space-y-4">
+                  {filteredComplaints
+                    .filter(complaint => complaint.status === 'Resolved')
+                    .map((complaint) => (
+                      <div
+                        key={complaint.id}
+                        className="bg-[var(--background)] border border-[var(--foreground)] rounded-lg p-4 shadow-sm"
                       >
-                        {complaint.status}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6">
-                      <div className="flex space-x-2">
+                        <div className="mb-2">
+                          <span className="text-sm opacity-70">
+                            {new Date(complaint.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <p className="font-medium mb-2">
+                          {complaint.anonymous ? 'Anonymous' : complaint.email}
+                        </p>
+                        <p className="text-sm mb-2">Project: {complaint.project}</p>
+                        <p className="text-sm mb-3">{complaint.complaint_text}</p>
                         <select
-                          className="px-3 py-1 rounded border border-[var(--foreground)] bg-transparent"
+                          className="w-full px-3 py-1 rounded border border-[var(--foreground)] bg-transparent text-sm"
                           value={complaint.status}
                           onChange={(e) => handleStatusChange(complaint.id, e.target.value)}
                         >
-                          <option value="Pending">Pending</option>
-                          <option value="Resolved">Resolved</option>
-                          <option value="Rejected">Rejected</option>
+                          {statusColumns.map((s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          ))}
                         </select>
-                        <button
-                          className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-                          onClick={() => handleDeleteComplaint(complaint.id, complaint.status)}
-                        >
-                          Delete
-                        </button>
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    ))}
+                </div>
+              </div>
             )}
+
+            {/* Rejected Column */}
+            {showRejected && (
+              <div className="bg-[var(--background)] rounded-xl shadow-lg p-4">
+                <h2 className="text-xl font-semibold mb-4 text-[var(--foreground)]">
+                  Rejected
+                  <span className="ml-2 text-sm opacity-70">
+                    ({filteredComplaints.filter(c => c.status === 'Rejected').length})
+                  </span>
+                </h2>
+                <div className="space-y-4">
+                  {filteredComplaints
+                    .filter(complaint => complaint.status === 'Rejected')
+                    .map((complaint) => (
+                      <div
+                        key={complaint.id}
+                        className="bg-[var(--background)] border border-[var(--foreground)] rounded-lg p-4 shadow-sm"
+                      >
+                        <div className="mb-2">
+                          <span className="text-sm opacity-70">
+                            {new Date(complaint.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <p className="font-medium mb-2">
+                          {complaint.anonymous ? 'Anonymous' : complaint.email}
+                        </p>
+                        <p className="text-sm mb-2">Project: {complaint.project}</p>
+                        <p className="text-sm mb-3">{complaint.complaint_text}</p>
+                        <select
+                          className="w-full px-3 py-1 rounded border border-[var(--foreground)] bg-transparent text-sm"
+                          value={complaint.status}
+                          onChange={(e) => handleStatusChange(complaint.id, e.target.value)}
+                        >
+                          {statusColumns.map((s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Pending Column - Full width with 2 columns for complaints */}
+          <div className="bg-[var(--background)] rounded-xl shadow-lg p-4">
+            <h2 className="text-xl font-semibold mb-4 text-[var(--foreground)]">
+              Pending
+              <span className="ml-2 text-sm opacity-70">
+                ({filteredComplaints.filter(c => c.status === 'Pending').length})
+              </span>
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredComplaints
+                .filter(complaint => complaint.status === 'Pending')
+                .map((complaint) => (
+                  <div
+                    key={complaint.id}
+                    className="bg-[var(--background)] border border-[var(--foreground)] rounded-lg p-4 shadow-sm"
+                  >
+                    <div className="mb-2">
+                      <span className="text-sm opacity-70">
+                        {new Date(complaint.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="font-medium mb-2">
+                      {complaint.anonymous ? 'Anonymous' : complaint.email}
+                    </p>
+                    <p className="text-sm mb-2">Project: {complaint.project}</p>
+                    <p className="text-sm mb-3">{complaint.complaint_text}</p>
+                    <select
+                      className="w-full px-3 py-1 rounded border border-[var(--foreground)] bg-transparent text-sm"
+                      value={complaint.status}
+                      onChange={(e) => handleStatusChange(complaint.id, e.target.value)}
+                    >
+                      {statusColumns.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
       </div>
