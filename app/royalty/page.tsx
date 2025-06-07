@@ -50,7 +50,7 @@ export default function RoyaltyPage() {
 
   const handleMinerSelect = (miner: Miner) => {
     setSelectedMiner(miner);
-    setSearchTerm(miner.first_name + ' ' + miner.last_name);
+    setSearchTerm('');
   };
 
   const handleCalculated = (data: any) => {
@@ -122,39 +122,51 @@ export default function RoyaltyPage() {
 
   return (
     <Layout>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6 text-gray-800">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
         <UserGreeting />
-        <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
-          
+        <div className="bg-[var(--card-background)] rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8">
           
           {/* Miner Search Section */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900">Select Miner</h2>
+            <div className="flex items-center gap-3 mb-6">
+              <svg className="w-7 h-7 text-[var(--primary)] animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <h2 className="text-2xl font-bold text-[var(--foreground)]">Select Miner</h2>
+            </div>
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-                <span className="ml-3 text-gray-600">Loading miners...</span>
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--primary)]"></div>
+                <span className="ml-3 text-[var(--secondary)]">Loading miners...</span>
               </div>
             ) : (
               <div className="relative">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search miner by name..."
-                  className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search miner by name..."
+                    className="w-full px-4 py-3 rounded-lg bg-[var(--input-background)] border border-[var(--border)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)] text-[var(--foreground)] transition-all duration-200"
+                  />
+                  <svg className="w-5 h-5 text-[var(--secondary)] absolute right-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
                 
                 {/* Dropdown for search results */}
                 {searchTerm && filteredMiners.length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg max-h-60 overflow-auto">
+                  <div className="absolute z-10 w-full mt-2 bg-white rounded-lg shadow-xl border border-[var(--border)] max-h-60 overflow-auto">
                     {filteredMiners.map((miner: Miner) => (
                       <div
                         key={miner.id}
                         onClick={() => handleMinerSelect(miner)}
-                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-800"
+                        className="px-4 py-3 hover:bg-[var(--background)] cursor-pointer text-[var(--foreground)] transition-colors duration-200 flex items-center gap-3"
                       >
-                        {miner.first_name + ' ' + miner.last_name}
+                        <svg className="w-5 h-5 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span>{miner.first_name + ' ' + miner.last_name}</span>
                       </div>
                     ))}
                   </div>
@@ -165,14 +177,27 @@ export default function RoyaltyPage() {
 
           {/* Selected Miner Info */}
           {selectedMiner && (
-            <div className="mb-8 p-4 bg-blue-50 rounded-md text-gray-800 border border-blue-200">
-              <h3 className="font-medium text-blue-800">Selected Miner:</h3>
-              <p>{selectedMiner.first_name + ' ' + selectedMiner.last_name}</p>
-              <p className="text-xs text-gray-500">ID: {selectedMiner.id}</p>
+            <div className="mb-8 p-6 bg-[var(--background)] rounded-lg border border-[var(--border)] transition-all duration-300 hover:border-[var(--primary)]">
+              <div className="flex items-center gap-3 mb-3">
+                <svg className="w-6 h-6 text-[var(--primary)] animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <h3 className="text-lg font-semibold text-[var(--foreground)]">Selected Miner</h3>
+              </div>
+              <div className="space-y-2">
+                <p className="text-[var(--foreground)] font-medium">{selectedMiner.first_name + ' ' + selectedMiner.last_name}</p>
+                <p className="text-sm text-[var(--secondary)]">ID: {selectedMiner.id}</p>
+              </div>
             </div>
           )}
 
-          <h2 className="text-2xl font-bold mb-8 text-gray-900">Mining Royalty Calculator</h2>
+          <div className="flex items-center gap-3 mb-8">
+            <svg className="w-7 h-7 text-[var(--primary)] animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+            <h2 className="text-2xl font-bold text-[var(--foreground)]">Mining Royalty Calculator</h2>
+          </div>
+
           <ErrorBoundary>
             <RoyaltyCalculator 
               onCalculated={handleCalculated}

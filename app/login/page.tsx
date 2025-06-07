@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import Layout from '../components/Layout';
 import Swal from 'sweetalert2';
 
@@ -72,20 +73,21 @@ export default function LoginPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8 bg-[var(--background)] p-8 rounded-xl shadow-lg">
-          <div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-[var(--foreground)]">
-              Login
-            </h2>
-            <p className="mt-2 text-center text-sm text-[var(--foreground)] opacity-80">
-              Login to access the admin dashboard
+      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[var(--surface)]">
+        <div className="max-w-md w-full space-y-8">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Image src="/favicon.ico" alt="CeylonMine Logo" width={70} height={70} />
+            </div>
+            <p className="text-[var(--secondary)]">
+              Sign in to access the admin dashboard
             </p>
           </div>
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            <div className="rounded-md shadow-sm -space-y-px">
+
+          <div className="card">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="email" className="sr-only">
+                <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)] mb-2">
                   Email address
                 </label>
                 <input
@@ -93,15 +95,15 @@ export default function LoginPage() {
                   name="email"
                   type="email"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-[var(--border)] placeholder-[var(--foreground)] opacity-50 rounded-t-md focus:outline-none focus:ring-[var(--primary)] focus:border-[var(--primary)] focus:z-10 sm:text-sm bg-[var(--input-background)]"
-                  placeholder="Email address"
+                  className="input-field"
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <br></br>
+
               <div>
-                <label htmlFor="password" className="sr-only">
+                <label htmlFor="password" className="block text-sm font-medium text-[var(--foreground)] mb-2">
                   Password
                 </label>
                 <input
@@ -109,28 +111,35 @@ export default function LoginPage() {
                   name="password"
                   type="password"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-[var(--border)] placeholder-[var(--foreground)] opacity-50 rounded-b-md focus:outline-none focus:ring-[var(--primary)] focus:border-[var(--primary)] focus:z-10 sm:text-sm bg-[var(--input-background)]"
-                  placeholder="Password"
+                  className="input-field"
+                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-            </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[var(--foreground)] hover:bg-[var(--foreground)] opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary)] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-                ) : (
-                  'Login'
-                )}
-              </button>
-            </div>
-          </form>
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full btn-primary flex items-center justify-center space-x-2"
+                >
+                  {loading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                      <span>Signing in...</span>
+                    </>
+                  ) : (
+                    'Sign in'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div className="text-center text-sm text-[var(--secondary)]">
+            <p>© {new Date().getFullYear()} CeylonMine. All rights reserved.</p>
+          </div>
         </div>
       </div>
     </Layout>
