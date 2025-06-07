@@ -77,7 +77,7 @@ export default function LoginPage() {
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <Image src="/favicon.ico" alt="CeylonMine Logo" width={70} height={70} />
+              <Image src="/favicon.ico" alt="CeylonMine Logo" className="rounded-[12px]" width={90} height={90} />
             </div>
             <p className="text-[var(--secondary)]">
               Sign in to access the admin dashboard
