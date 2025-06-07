@@ -110,6 +110,11 @@ button:disabled {
   border: 1px solid #b91c1c;
 }
 
+.round-image {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 /* Animations */
 @keyframes float {
   0% { transform: translateY(0px); }

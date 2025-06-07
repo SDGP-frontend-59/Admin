@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import Swal from 'sweetalert2';
+import Image from 'next/image';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [currentYear, setCurrentYear] = useState('');
@@ -104,7 +105,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="text-xl font-bold text-[var(--primary)]">
-              CeylonMine Admin
+              <div className="flex items-center gap-2">
+                <Image src="/favicon.ico" alt="CeylonMine Logo" className="rounded-[12px]" width={55} height={55} />
+                <p className="font-bold text-[var(--primary)]">
+                  Dashboard
+                </p>
+              </div>
             </Link>
             
             {/* Hamburger Menu (Mobile) */}
